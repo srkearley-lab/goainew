@@ -13,7 +13,9 @@ module.exports = async (req, res) => {
           price_data: {
             currency: 'eur',
             product_data: {
-              name: 'GoAI Website Package',
+              name: 'GO AI — Starter Website Package',
+              description: 'Professional website built in 7 days',
+              images: ['https://goainew-weld.vercel.app/og-image.png'],
             },
             unit_amount: 45000,
           },
@@ -21,12 +23,15 @@ module.exports = async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: 'https://goainew.vercel.app/success',
-      cancel_url: 'https://goainew.vercel.app',
+      success_url: 'https://goainew-weld.vercel.app/#/success',
+      cancel_url: 'https://goainew-weld.vercel.app/#/contact',
+      billing_address_collection: 'required',
+      phone_number_collection: { enabled: true },
     });
 
-    res.status(200).json({ id: session.id });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error('Stripe error:', err);
+    res.status(500).json({ error: err.message });
   }
 };

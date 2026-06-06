@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import { Icon, Link, navigate, WHATSAPP, Eyebrow, Button } from '../lib.jsx';
 import { useApp, LangSwitcher } from '../store.jsx';
 
-const stripePromise = loadStripe('pk_test_51TfKxtFPfIHqc65P4vGBI1HBXKsqmc5o5Ea2vjl2Mzhfd5oZ8gVncbfnnnnXOccq9Rh2CjvMnzVXAJnVM5TUcH2800PqBhJP5g');
-
-async function startCheckout() {
-  const stripe = await stripePromise;
-  const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-  if (!res.ok) { alert('Payment unavailable. Please contact us on WhatsApp.'); return; }
-  const { id } = await res.json();
-  await stripe.redirectToCheckout({ sessionId: id });
+async function handlePayment() {
+  try {
+    const response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ package: 'starter' }),
+    });
+    const data = await response.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Payment setup error. Please contact us on WhatsApp.');
+    }
+  } catch (error) {
+    alert('Something went wrong. Please try again or contact us.');
+  }
 }
 
 const NAV_LINKS = [
@@ -210,7 +217,7 @@ export function FinalCTA() {
         <p style={{ color: 'rgba(255,255,255,0.65)', maxWidth: 520, lineHeight: 1.65, fontSize: 'var(--text-lg)' }}>{t('cta_body')}</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 8 }}>
           <Button to="/contact" variant="gold" size="lg" icon="FileText">{t('request_proposal')}</Button>
-          <button onClick={startCheckout} className="btn-pay"
+          <button onClick={handlePayment} className="btn-pay"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 52, padding: '0 28px', borderRadius: 'var(--radius-full)', border: 'none', fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer' }}>
             <Icon name="CreditCard" size={18} color="#fff" />
             {t('pay_get_started')}
