@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Icon, navigate, WHATSAPP, Eyebrow, Button, Reveal, SectionHeader, Section } from '../lib.jsx';
 import { useApp, SelectWebsiteButton } from '../store.jsx';
 import { DATA } from '../data.js';
@@ -90,6 +90,80 @@ export function Hero() {
       </div>
     </section>
   );
+}
+
+function VideoPlayer() {
+  const videoRef = useRef(null)
+  const [playing, setPlaying] = useState(false)
+
+  const handlePlay = () => {
+    videoRef.current.play()
+    setPlaying(true)
+  }
+
+  return (
+    <section style={{
+      width: '100%',
+      padding: '3rem 1rem',
+      background: '#0a0a0a'
+    }}>
+      <div style={{
+        maxWidth: '800px',
+        margin: '0 auto',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        position: 'relative',
+        border: '1px solid rgba(107,78,255,0.3)',
+        boxShadow: '0 0 40px rgba(107,78,255,0.2)'
+      }}>
+        <video
+          ref={videoRef}
+          playsInline
+          disablePictureInPicture
+          style={{
+            display: 'block',
+            width: '100%',
+            maxHeight: '500px',
+            objectFit: 'cover'
+          }}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)}
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+
+        {!playing && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,0.4)',
+            cursor: 'pointer'
+          }} onClick={handlePlay}>
+            <button style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #6B4EFF, #4E9EFF)',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 30px rgba(107,78,255,0.6)'
+            }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
+  )
 }
 
 function JourneyCard({ item, idx }) {
@@ -270,6 +344,7 @@ export function Home() {
   return (
     <>
       <Hero />
+      <VideoPlayer />
       <JourneyLauncher />
       <Pricing />
       <WhatWeDo />
