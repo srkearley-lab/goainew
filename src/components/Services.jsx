@@ -68,14 +68,15 @@ function CatalogCard({ id, idx }) {
   );
 }
 
-function ServicesAnchors({ groups, t }) {
+function ServicesAnchors({ groups }) {
+  const { tr } = useApp();
   return (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 40 }}>
       {groups.map((g) => (
         <a key={g} href={`#${GROUP_ANCHOR_KEY[g]}`}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 'var(--radius-full)', border: '1px solid var(--line)', background: 'var(--surface)', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-2)', textDecoration: 'none', transition: 'border-color 160ms ease' }}>
           <Icon name={GROUP_ICONS[g]} size={15} color="var(--brand)" />
-          {t(GROUP_TITLES[g])}
+          {tr(GROUP_TITLES[g])}
         </a>
       ))}
     </div>
@@ -83,7 +84,7 @@ function ServicesAnchors({ groups, t }) {
 }
 
 function ServiceGroupSection({ group }) {
-  const { t, tr } = useApp();
+  const { tr } = useApp();
   const ids = CATALOG[group] || [];
   return (
     <section id={GROUP_ANCHOR_KEY[group]} style={{ paddingBottom: 'var(--section-y)' }}>
@@ -92,7 +93,7 @@ function ServiceGroupSection({ group }) {
           <Icon name={GROUP_ICONS[group]} size={22} color="var(--brand)" />
         </div>
         <div>
-          <h2 style={{ fontSize: 24, marginBottom: 2 }}>{t(GROUP_TITLES[group])}</h2>
+          <h2 style={{ fontSize: 24, marginBottom: 2 }}>{tr(GROUP_TITLES[group])}</h2>
         </div>
       </div>
       <div className="grid-3">
@@ -126,7 +127,7 @@ export function Services() {
     <>
       <PageHero tag={t('nav_services')} title={t('services_page_title')} description={t('services_page_body')} />
       <div className="container" style={{ paddingTop: 40, paddingBottom: 'var(--section-y)' }}>
-        <ServicesAnchors groups={GROUP_ORDER} t={t} />
+        <ServicesAnchors groups={GROUP_ORDER} />
         <DiffText />
         {GROUP_ORDER.map((g) => <ServiceGroupSection key={g} group={g} />)}
       </div>

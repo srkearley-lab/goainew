@@ -12,7 +12,7 @@ function ProposalToggle({ group, lang }) {
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <Icon name={GROUP_ICONS[group]} size={16} color="var(--brand)" />
-        <p style={{ fontWeight: 700, fontSize: 'var(--text-sm)' }}>{t(GROUP_TITLES[group])}</p>
+        <p style={{ fontWeight: 700, fontSize: 'var(--text-sm)' }}>{tr(GROUP_TITLES[group])}</p>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
         {ids.map((id) => {

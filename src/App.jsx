@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Component } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { AppProvider } from './store.jsx';
 import { useHashRoute } from './lib.jsx';
@@ -73,12 +73,31 @@ function ThemeManager({ children }) {
   return children;
 }
 
+class ErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { err: null }; }
+  static getDerivedStateFromError(err) { return { err }; }
+  render() {
+    if (this.state.err) {
+      return (
+        <div style={{ padding: '80px 32px', textAlign: 'center', fontFamily: 'sans-serif' }}>
+          <h2 style={{ marginBottom: 12 }}>Something went wrong</h2>
+          <p style={{ color: '#666', marginBottom: 24 }}>Please refresh the page or go back to the home page.</p>
+          <a href="/" style={{ color: '#4f46e5', fontWeight: 600 }}>← Home</a>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
-    <AppProvider>
-      <ThemeManager>
-        <AppShell />
-      </ThemeManager>
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <ThemeManager>
+          <AppShell />
+        </ThemeManager>
+      </AppProvider>
+    </ErrorBoundary>
   );
 }
