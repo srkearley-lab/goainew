@@ -1,8 +1,20 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return res.status(500).json({ error: 'Stripe not configured' });
   }
 
   try {
@@ -15,7 +27,6 @@ module.exports = async (req, res) => {
             product_data: {
               name: 'GO AI — Starter Website Package',
               description: 'Professional website built in 7 days',
-              images: ['https://goainew-weld.vercel.app/og-image.png'],
             },
             unit_amount: 45000,
           },
@@ -25,17 +36,11 @@ module.exports = async (req, res) => {
       mode: 'payment',
       success_url: 'https://goainew-weld.vercel.app/#/success',
       cancel_url: 'https://goainew-weld.vercel.app/#/contact',
-      billing_address_collection: 'required',
-      phone_number_collection: { enabled: true },
     });
 
-    res.status(200).json({ url: session.url });
+    return res.status(200).json({ url: session.url });
   } catch (err) {
-    console.error('Full Stripe error:', JSON.stringify(err));
-    res.status(500).json({
-      error: err.message,
-      type: err.type,
-      code: err.code,
-    });
+    console.error('Stripe error:', err.message);
+    return res.status(500).json({ error: err.message });
   }
 };

@@ -2,25 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Icon, Link, navigate, WHATSAPP, Eyebrow, Button } from '../lib.jsx';
 import { useApp, LangSwitcher } from '../store.jsx';
 
-async function handlePayment() {
-  try {
-    const response = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ package: 'starter' }),
-    });
-    const data = await response.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('Payment setup error: ' + (data.error || 'Unknown error') + (data.code ? ' [' + data.code + ']' : ''));
-    }
-  } catch (error) {
-    console.error('Payment error:', error);
-    alert('Error: ' + error.message);
-  }
-}
-
 const NAV_LINKS = [
   { key: 'nav_services',   to: '/services' },
   { key: 'nav_industries', to: '/industries' },
@@ -210,6 +191,42 @@ export function PageHero({ tag, title, description, children }) {
 
 export function FinalCTA() {
   const { t } = useApp();
+  const [loading, setLoading] = useState(false);
+
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ package: 'starter' }),
+      });
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('Server returned invalid response: ' + text.slice(0, 120));
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Payment failed (' + response.status + ')');
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment error: ' + error.message + '\nPlease WhatsApp us: +30 6985743536');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section style={{ padding: 'var(--section-y) 0', background: 'var(--ink)', color: '#fff', textAlign: 'center' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
@@ -218,10 +235,10 @@ export function FinalCTA() {
         <p style={{ color: 'rgba(255,255,255,0.65)', maxWidth: 520, lineHeight: 1.65, fontSize: 'var(--text-lg)' }}>{t('cta_body')}</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 8 }}>
           <Button to="/contact" variant="gold" size="lg" icon="FileText">{t('request_proposal')}</Button>
-          <button onClick={handlePayment} className="btn-pay"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 52, padding: '0 28px', borderRadius: 'var(--radius-full)', border: 'none', fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer' }}>
+          <button onClick={handlePayment} disabled={loading} className="btn-pay"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 52, padding: '0 28px', borderRadius: 'var(--radius-full)', border: 'none', fontSize: 'var(--text-sm)', fontWeight: 700, opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
             <Icon name="CreditCard" size={18} color="#fff" />
-            {t('pay_get_started')}
+            {loading ? 'Processing...' : t('pay_get_started')}
           </button>
           <a href={WHATSAPP} target="_blank" rel="noreferrer"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 52, padding: '0 28px', borderRadius: 'var(--radius-full)', background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer' }}>
