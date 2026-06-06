@@ -13,10 +13,11 @@ async function handlePayment() {
     if (data.url) {
       window.location.href = data.url;
     } else {
-      alert('Payment setup error. Please contact us on WhatsApp.');
+      alert('Payment setup error: ' + (data.error || 'Unknown error') + (data.code ? ' [' + data.code + ']' : ''));
     }
   } catch (error) {
-    alert('Something went wrong. Please try again or contact us.');
+    console.error('Payment error:', error);
+    alert('Error: ' + error.message);
   }
 }
 
