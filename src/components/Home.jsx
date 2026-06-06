@@ -341,10 +341,11 @@ function WhyUs() {
 }
 
 export function Home() {
+  const { lang } = useApp();
   return (
     <>
       <Hero />
-      <VideoPlayer />
+      {lang === 'GR' && <VideoPlayer />}
       <JourneyLauncher />
       <Pricing />
       <WhatWeDo />
