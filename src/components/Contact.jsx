@@ -124,14 +124,19 @@ function BusinessForm() {
           services: items.map((id) => labelOf(id)),
         }),
       });
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error('Server error (' + response.status + ')');
+      }
       if (data.success) {
         setSubmitted(true);
       } else {
-        setError('Something went wrong. Please WhatsApp us.');
+        setError((data.error ? data.error + '. ' : '') + 'Please WhatsApp us: +30 6985743536');
       }
-    } catch {
-      setError('Failed to send. Please WhatsApp us: +30 6985743536');
+    } catch (err) {
+      setError((err.message || 'Failed to send') + '. Please WhatsApp us: +30 6985743536');
     } finally {
       setSending(false);
     }
