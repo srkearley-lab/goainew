@@ -97,19 +97,44 @@ function Field({ label, name, type = 'text', value, onChange, required, placehol
 }
 
 function BusinessForm() {
-  const { t, tr, items, count } = useApp();
+  const { t, tr, items, count, labelOf } = useApp();
   const [form, setForm] = useState({ name: '', business: '', type: '', phone: '', email: '', url: '', goals: '' });
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSending(false);
-    setSubmitted(true);
+    setError('');
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          business: form.business,
+          type: form.type,
+          phone: form.phone,
+          email: form.email,
+          url: form.url,
+          goals: form.goals,
+          services: items.map((id) => labelOf(id)),
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError('Something went wrong. Please WhatsApp us.');
+      }
+    } catch {
+      setError('Failed to send. Please WhatsApp us: +30 6985743536');
+    } finally {
+      setSending(false);
+    }
   };
 
   if (submitted) return <Confirmation />;
@@ -131,6 +156,9 @@ function BusinessForm() {
         <div style={{ background: 'var(--brand-soft)', borderRadius: 'var(--radius)', padding: '12px 16px', fontSize: 'var(--text-sm)', color: 'var(--ink-2)' }}>
           {t('form_services_note')} ({count})
         </div>
+      )}
+      {error && (
+        <p style={{ color: 'var(--error, #e53e3e)', fontSize: 'var(--text-sm)', textAlign: 'center' }}>{error}</p>
       )}
       <button type="submit" disabled={sending}
         style={{ height: 52, borderRadius: 'var(--radius-full)', background: 'var(--brand)', color: '#fff', border: 'none', fontSize: 'var(--text-base)', fontWeight: 700, cursor: sending ? 'wait' : 'pointer', opacity: sending ? 0.8 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: 'var(--shadow-brand)', transition: 'opacity 200ms ease' }}>
