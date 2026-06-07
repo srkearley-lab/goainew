@@ -124,13 +124,16 @@ function VideoPlayer() {
             display: 'block',
             width: '100%',
             maxHeight: '500px',
-            objectFit: 'cover'
+            objectFit: 'cover',
+            background: '#000'
           }}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onEnded={() => setPlaying(false)}
+          onError={(e) => console.error('Video error:', e)}
         >
           <source src="/hero-video.mp4" type="video/mp4" />
+          Your browser does not support video.
         </video>
 
         {!playing && (
