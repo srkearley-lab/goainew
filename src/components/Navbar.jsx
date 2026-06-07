@@ -71,9 +71,10 @@ export function Navbar() {
         transition: 'background 300ms ease, border-color 300ms ease',
       }}>
         <Logo />
-        <nav style={{ display: 'flex', gap: 4 }} aria-label="Primary">
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }} aria-label="Primary">
           {NAV_LINKS.map(({ key, to }) => (
-            <Link key={to} to={to} style={{ display: 'none', padding: '8px 20px', borderRadius: 'var(--radius-full)', fontSize: 14, fontWeight: 500, color: 'var(--ink-2)', textDecoration: 'none', transition: 'color 160ms ease', '@media(min-width:768px)': { display: 'block' } }}
+            <Link key={to} to={to}
+              style={{ padding: '8px 16px', borderRadius: 'var(--radius-full)', fontSize: 14, fontWeight: 500, color: 'var(--ink-2)', textDecoration: 'none', whiteSpace: 'nowrap', transition: 'color 160ms ease' }}
               className="nav-link">
               {t(key)}
             </Link>

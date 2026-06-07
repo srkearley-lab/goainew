@@ -296,13 +296,13 @@ select.input { appearance: none; cursor: pointer;
 
 .hide-mobile { display: flex; }
 .show-mobile { display: none; }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .hide-mobile { display: none !important; }
   .show-mobile { display: flex !important; }
 }
 
 .nav-link { display: block; }
-@media (max-width: 900px) { .nav-link { display: none; } }
+@media (max-width: 900px) { .nav-link { display: none !important; } }
 
 .btn-gold { background: var(--gold); color: #fff; box-shadow: 0 8px 20px -8px rgba(180,121,27,0.5); }
 .btn-gold:hover { opacity: 0.92; }
