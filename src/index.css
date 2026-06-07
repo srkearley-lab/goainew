@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
+@keyframes pulse {
+  0%   { opacity: 1; transform: translateX(-50%) scale(1); }
+  50%  { opacity: 0.8; transform: translateX(-50%) scale(1.05); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
 :root {
   --font-sans: 'Manrope', 'Helvetica Neue', Arial, sans-serif;
   --font-display: 'Manrope', 'Helvetica Neue', Arial, sans-serif;

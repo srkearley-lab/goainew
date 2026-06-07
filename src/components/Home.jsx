@@ -55,20 +55,27 @@ export function Hero() {
 function VideoPlayer({ src }) {
   const videoRef = useRef(null)
   const [playing, setPlaying] = useState(false)
+  const [browserMuted, setBrowserMuted] = useState(false)
 
   const handlePlay = () => {
     if (videoRef.current) {
       videoRef.current.muted = false
       videoRef.current.volume = 1.0
-      videoRef.current.play().then(() => {
-        setPlaying(true)
-      }).catch(() => {
-        videoRef.current.muted = true
-        videoRef.current.play().then(() => {
-          videoRef.current.muted = false
+      const playPromise = videoRef.current.play()
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
           setPlaying(true)
+          if (videoRef.current.muted) {
+            setBrowserMuted(true)
+          }
+        }).catch(() => {
+          videoRef.current.muted = true
+          videoRef.current.play().then(() => {
+            setPlaying(true)
+            setBrowserMuted(true)
+          })
         })
-      })
+      }
     }
   }
 
@@ -124,6 +131,40 @@ function VideoPlayer({ src }) {
         >
           <source src={src} type="video/mp4" />
         </video>
+
+        {playing && browserMuted && (
+          <div
+            onClick={() => {
+              if (videoRef.current) {
+                videoRef.current.muted = false
+                videoRef.current.volume = 1.0
+                setBrowserMuted(false)
+              }
+            }}
+            style={{
+              position: 'absolute',
+              top: '1rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'rgba(107,78,255,0.95)',
+              color: 'white',
+              padding: '0.6rem 1.5rem',
+              borderRadius: '50px',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              zIndex: 10,
+              boxShadow: '0 4px 20px rgba(107,78,255,0.5)',
+              animation: 'pulse 1.5s infinite',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            🔊 Click here to enable sound
+          </div>
+        )}
 
         {!playing && (
           <div
@@ -221,6 +262,7 @@ function VideoPlayer({ src }) {
                 if (videoRef.current) {
                   videoRef.current.muted = false
                   videoRef.current.volume = 1.0
+                  setBrowserMuted(false)
                 }
               }}
               style={{
