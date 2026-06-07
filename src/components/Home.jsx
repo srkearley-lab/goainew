@@ -57,8 +57,31 @@ function VideoPlayer({ src }) {
   const [playing, setPlaying] = useState(false)
 
   const handlePlay = () => {
-    videoRef.current.play()
-    setPlaying(true)
+    if (videoRef.current) {
+      videoRef.current.muted = false
+      videoRef.current.play()
+      setPlaying(true)
+    }
+  }
+
+  const handleStop = () => {
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+      setPlaying(false)
+    }
+  }
+
+  const handlePause = () => {
+    if (videoRef.current) {
+      if (playing) {
+        videoRef.current.pause()
+        setPlaying(false)
+      } else {
+        videoRef.current.play()
+        setPlaying(true)
+      }
+    }
   }
 
   return (
@@ -80,46 +103,109 @@ function VideoPlayer({ src }) {
           ref={videoRef}
           playsInline
           disablePictureInPicture
+          controlsList="nodownload nofullscreen noremoteplayback"
           style={{
             display: 'block',
             width: '100%',
             maxHeight: '500px',
-            objectFit: 'cover',
-            background: '#000'
+            objectFit: 'cover'
           }}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onEnded={() => setPlaying(false)}
-          onError={(e) => console.error('Video error:', e)}
         >
           <source src={src} type="video/mp4" />
-          Your browser does not support video.
         </video>
 
         {!playing && (
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(0,0,0,0.4)',
-            cursor: 'pointer'
-          }} onClick={handlePlay}>
-            <button style={{
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #6B4EFF, #4E9EFF)',
-              border: 'none',
-              cursor: 'pointer',
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 30px rgba(107,78,255,0.6)'
-            }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+              background: 'rgba(0,0,0,0.45)',
+              cursor: 'pointer'
+            }}
+            onClick={handlePlay}
+          >
+            <button
+              style={{
+                width: '90px',
+                height: '90px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #6B4EFF, #4E9EFF)',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 40px rgba(107,78,255,0.7)',
+                transition: 'transform 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
                 <polygon points="5,3 19,12 5,21" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {playing && (
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1rem',
+            padding: '1rem',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'
+          }}>
+            <button
+              onClick={handlePause}
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.2)',
+                border: '2px solid white',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(4px)'
+              }}
+              title="Pause"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <rect x="6" y="4" width="4" height="16"/>
+                <rect x="14" y="4" width="4" height="16"/>
+              </svg>
+            </button>
+            <button
+              onClick={handleStop}
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.2)',
+                border: '2px solid white',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(4px)'
+              }}
+              title="Stop"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <rect x="4" y="4" width="16" height="16"/>
               </svg>
             </button>
           </div>
