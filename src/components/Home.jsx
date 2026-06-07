@@ -59,8 +59,16 @@ function VideoPlayer({ src }) {
   const handlePlay = () => {
     if (videoRef.current) {
       videoRef.current.muted = false
-      videoRef.current.play()
-      setPlaying(true)
+      videoRef.current.volume = 1.0
+      videoRef.current.play().then(() => {
+        setPlaying(true)
+      }).catch(() => {
+        videoRef.current.muted = true
+        videoRef.current.play().then(() => {
+          videoRef.current.muted = false
+          setPlaying(true)
+        })
+      })
     }
   }
 
@@ -103,7 +111,7 @@ function VideoPlayer({ src }) {
           ref={videoRef}
           playsInline
           disablePictureInPicture
-          controlsList="nodownload nofullscreen noremoteplayback"
+          controlsList="nodownload noremoteplayback"
           style={{
             display: 'block',
             width: '100%',
@@ -206,6 +214,33 @@ function VideoPlayer({ src }) {
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                 <rect x="4" y="4" width="16" height="16"/>
+              </svg>
+            </button>
+            <button
+              onClick={() => {
+                if (videoRef.current) {
+                  videoRef.current.muted = false
+                  videoRef.current.volume = 1.0
+                }
+              }}
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: 'rgba(255,100,100,0.3)',
+                border: '2px solid #ff6464',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(4px)'
+              }}
+              title="Unmute / Enable Sound"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5"/>
+                <line x1="23" y1="9" x2="17" y2="15" stroke="white" strokeWidth="2"/>
+                <line x1="17" y1="9" x2="23" y2="15" stroke="white" strokeWidth="2"/>
               </svg>
             </button>
           </div>
