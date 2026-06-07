@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Icon, Link, navigate, WHATSAPP, Eyebrow, Button } from '../lib.jsx';
 import { useApp, LangSwitcher } from '../store.jsx';
+import logo from '../assets/goai-logo-ai-black-transparent.png';
 
 const NAV_LINKS = [
   { key: 'nav_services',   to: '/services' },
@@ -13,11 +14,7 @@ const NAV_LINKS = [
 export function Logo({ height = 48 }) {
   return (
     <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-      <img
-        src="/goai-logo.png"
-        alt="GO AI"
-        style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
-      />
+      <img src={logo} alt="GO AI" style={{ height: '40px', width: 'auto' }} />
     </Link>
   );
 }
