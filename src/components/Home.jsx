@@ -4,43 +4,6 @@ import { useApp, SelectWebsiteButton } from '../store.jsx';
 import { DATA } from '../data.js';
 import { FinalCTA } from './Navbar.jsx';
 
-function HeroShowcase() {
-  return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: 680, margin: '0 auto' }}>
-      <div style={{
-        background: 'var(--surface)', borderRadius: 16, overflow: 'hidden',
-        boxShadow: 'var(--shadow-xl)', border: '1px solid var(--line)',
-      }}>
-        <div style={{ background: 'var(--surface-2)', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#ff5f57', display: 'block' }} />
-          <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#ffbd2e', display: 'block' }} />
-          <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c841', display: 'block' }} />
-          <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 6, height: 24, marginLeft: 8, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
-            <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>santorindreamvillas.gr</span>
-          </div>
-        </div>
-        <img
-          src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=680&q=80"
-          alt="Sample villa website"
-          style={{ width: '100%', display: 'block', aspectRatio: '16/9', objectFit: 'cover' }}
-        />
-      </div>
-      <div style={{
-        position: 'absolute', bottom: -16, right: -16, background: 'var(--surface)',
-        borderRadius: 12, padding: '12px 18px', boxShadow: 'var(--shadow-lg)',
-        border: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 10,
-      }}>
-        <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name="MessageCircle" size={18} color="#fff" />
-        </div>
-        <div>
-          <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: 0 }}>New enquiry</p>
-          <p style={{ fontSize: 13, fontWeight: 600, margin: 0 }}>3 bookings confirmed ✅</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function Hero() {
   const { t } = useApp();
@@ -74,10 +37,7 @@ export function Hero() {
             </a>
           </div>
         </Reveal>
-        <Reveal delay={240} style={{ width: '100%', maxWidth: 680, marginTop: 24 }}>
-          <HeroShowcase />
-        </Reveal>
-        <Reveal delay={300}>
+        <Reveal delay={240}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 24 }}>
             {DATA.heroProofKeys.map((k) => (
               <span key={k} style={{ fontSize: 13, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 6 }}>
