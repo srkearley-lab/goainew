@@ -63,7 +63,7 @@ export function Navbar() {
     <>
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        padding: '0 max(5%, 16px)', height: 64,
+        padding: '0 max(6%, 24px)', height: 76,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         background: scrolled ? 'var(--glass-bg)' : 'transparent',
         backdropFilter: scrolled ? 'blur(16px)' : 'none',
@@ -71,28 +71,28 @@ export function Navbar() {
         transition: 'background 300ms ease, border-color 300ms ease',
       }}>
         <Logo />
-        <nav style={{ display: 'flex', gap: 2 }} aria-label="Primary">
+        <nav style={{ display: 'flex', gap: 4 }} aria-label="Primary">
           {NAV_LINKS.map(({ key, to }) => (
-            <Link key={to} to={to} style={{ display: 'none', padding: '6px 14px', borderRadius: 'var(--radius-full)', fontSize: 13.5, fontWeight: 500, color: 'var(--ink-2)', textDecoration: 'none', transition: 'color 160ms ease', '@media(min-width:768px)': { display: 'block' } }}
+            <Link key={to} to={to} style={{ display: 'none', padding: '8px 20px', borderRadius: 'var(--radius-full)', fontSize: 14, fontWeight: 500, color: 'var(--ink-2)', textDecoration: 'none', transition: 'color 160ms ease', '@media(min-width:768px)': { display: 'block' } }}
               className="nav-link">
               {t(key)}
             </Link>
           ))}
         </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <LangSwitcher compact />
-          <div className="hide-mobile"><RequestProposalButton size="sm" /></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <LangSwitcher />
+          <div className="hide-mobile"><RequestProposalButton /></div>
           <button onClick={() => setOpen(!open)} className="show-mobile"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', padding: 4 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', padding: 6 }}
             aria-label="Menu" aria-expanded={open}>
-            <Icon name={open ? 'X' : 'Menu'} size={22} color="var(--ink)" />
+            <Icon name={open ? 'X' : 'Menu'} size={24} color="var(--ink)" />
           </button>
         </div>
       </header>
 
       {open && (
         <div style={{
-          position: 'fixed', top: 64, left: 0, right: 0, bottom: 0, zIndex: 99,
+          position: 'fixed', top: 76, left: 0, right: 0, bottom: 0, zIndex: 99,
           background: 'var(--bg)', padding: '24px max(5%,16px)', display: 'flex', flexDirection: 'column', gap: 4,
         }}>
           {NAV_LINKS.map(({ key, to }) => (
@@ -179,7 +179,7 @@ export function Footer() {
 
 export function PageHero({ tag, title, description, children }) {
   return (
-    <section className="hero-grid" style={{ paddingTop: 'calc(64px + var(--section-y))', paddingBottom: 'var(--section-y)', background: 'radial-gradient(ellipse 80% 50% at 50% 0%, var(--surface-accent), transparent)', textAlign: 'center' }}>
+    <section className="hero-grid" style={{ paddingTop: 'calc(76px + var(--section-y))', paddingBottom: 'var(--section-y)', background: 'radial-gradient(ellipse 80% 50% at 50% 0%, var(--surface-accent), transparent)', textAlign: 'center' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
         {tag && <Eyebrow dot>{tag}</Eyebrow>}
         <h1 style={{ maxWidth: 720 }}>{title}</h1>
