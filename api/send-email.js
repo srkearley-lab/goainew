@@ -87,10 +87,13 @@ module.exports = async (req, res) => {
       console.log(`Email sent via ${config.host}:${config.port}`);
       return res.status(200).json({ success: true });
     } catch (err) {
-      console.error(`Failed ${config.host}:${config.port} —`, err.message);
+      console.error(`Failed ${config.host}:${config.port} —`, JSON.stringify(err, Object.getOwnPropertyNames(err)));
       lastError = err;
     }
   }
 
-  return res.status(500).json({ error: lastError ? lastError.message : 'All SMTP configs failed' });
+  return res.status(500).json({
+    error: lastError ? lastError.message : 'All SMTP configs failed',
+    details: lastError ? JSON.stringify(lastError, Object.getOwnPropertyNames(lastError)) : 'No error details',
+  });
 };

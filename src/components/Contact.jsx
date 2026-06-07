@@ -133,7 +133,7 @@ function BusinessForm() {
       if (data.success) {
         setSubmitted(true);
       } else {
-        setError((data.error ? data.error + '. ' : '') + 'Please WhatsApp us: +30 6985743536');
+        setError(`Error: ${data.error}${data.details ? ' — ' + data.details : ''}`);
       }
     } catch (err) {
       setError((err.message || 'Failed to send') + '. Please WhatsApp us: +30 6985743536');
