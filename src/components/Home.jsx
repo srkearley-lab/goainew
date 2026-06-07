@@ -92,7 +92,7 @@ export function Hero() {
   );
 }
 
-function VideoPlayer() {
+function VideoPlayer({ src }) {
   const videoRef = useRef(null)
   const [playing, setPlaying] = useState(false)
 
@@ -132,7 +132,7 @@ function VideoPlayer() {
           onEnded={() => setPlaying(false)}
           onError={(e) => console.error('Video error:', e)}
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src={src} type="video/mp4" />
           Your browser does not support video.
         </video>
 
@@ -348,7 +348,8 @@ export function Home() {
   return (
     <>
       <Hero />
-      {lang === 'GR' && <VideoPlayer />}
+      {lang === 'GR' && <VideoPlayer src="/hero-video.mp4" />}
+      {lang === 'EN' && <VideoPlayer src="/hero-video-en.mp4" />}
       <JourneyLauncher />
       <Pricing />
       <WhatWeDo />
