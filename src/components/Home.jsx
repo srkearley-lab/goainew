@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Icon, navigate, WHATSAPP, Eyebrow, Button, Reveal, SectionHeader, Section } from '../lib.jsx';
 import { useApp, SelectWebsiteButton } from '../store.jsx';
 import { DATA } from '../data.js';
@@ -55,35 +55,46 @@ export function Hero() {
 function VideoPlayer({ src }) {
   const videoRef = useRef(null)
   const [playing, setPlaying] = useState(false)
-  const [browserMuted, setBrowserMuted] = useState(false)
 
-  const handlePlay = () => {
-    if (videoRef.current) {
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (videoRef.current) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext
+        if (AudioContext) {
+          const ctx = new AudioContext()
+          ctx.resume()
+        }
+        videoRef.current.muted = false
+        videoRef.current.volume = 1.0
+      }
+      document.removeEventListener('click', unlockAudio)
+      document.removeEventListener('touchstart', unlockAudio)
+    }
+    document.addEventListener('click', unlockAudio)
+    document.addEventListener('touchstart', unlockAudio)
+    return () => {
+      document.removeEventListener('click', unlockAudio)
+      document.removeEventListener('touchstart', unlockAudio)
+    }
+  }, [])
+
+  const handlePlay = async () => {
+    if (!videoRef.current) return
+    try {
       videoRef.current.muted = false
       videoRef.current.volume = 1.0
-      const playPromise = videoRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          setPlaying(true)
-          if (videoRef.current.muted) {
-            setBrowserMuted(true)
-          }
-        }).catch(() => {
-          videoRef.current.muted = true
-          videoRef.current.play().then(() => {
-            setPlaying(true)
-            setBrowserMuted(true)
-          })
-        })
+      await videoRef.current.play()
+      setPlaying(true)
+    } catch {
+      try {
+        videoRef.current.muted = true
+        await videoRef.current.play()
+        videoRef.current.muted = false
+        videoRef.current.volume = 1.0
+        setPlaying(true)
+      } catch (err2) {
+        console.error('Playback failed:', err2)
       }
-    }
-  }
-
-  const handleStop = () => {
-    if (videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-      setPlaying(false)
     }
   }
 
@@ -93,9 +104,20 @@ function VideoPlayer({ src }) {
         videoRef.current.pause()
         setPlaying(false)
       } else {
+        videoRef.current.muted = false
+        videoRef.current.volume = 1.0
         videoRef.current.play()
         setPlaying(true)
       }
+    }
+  }
+
+  const handleStop = () => {
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+      videoRef.current.muted = false
+      setPlaying(false)
     }
   }
 
@@ -132,40 +154,6 @@ function VideoPlayer({ src }) {
           <source src={src} type="video/mp4" />
         </video>
 
-        {playing && browserMuted && (
-          <div
-            onClick={() => {
-              if (videoRef.current) {
-                videoRef.current.muted = false
-                videoRef.current.volume = 1.0
-                setBrowserMuted(false)
-              }
-            }}
-            style={{
-              position: 'absolute',
-              top: '1rem',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'rgba(107,78,255,0.95)',
-              color: 'white',
-              padding: '0.6rem 1.5rem',
-              borderRadius: '50px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              zIndex: 10,
-              boxShadow: '0 4px 20px rgba(107,78,255,0.5)',
-              animation: 'pulse 1.5s infinite',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            🔊 Click here to enable sound
-          </div>
-        )}
-
         {!playing && (
           <div
             style={{
@@ -191,10 +179,7 @@ function VideoPlayer({ src }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: '0 0 40px rgba(107,78,255,0.7)',
-                transition: 'transform 0.2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
             >
               <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
                 <polygon points="5,3 19,12 5,21" />
@@ -213,22 +198,21 @@ function VideoPlayer({ src }) {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '1rem',
-            padding: '1rem',
+            padding: '1.5rem',
             background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'
           }}>
             <button
               onClick={handlePause}
               style={{
-                width: '48px',
-                height: '48px',
+                width: '52px',
+                height: '52px',
                 borderRadius: '50%',
-                background: 'rgba(255,255,255,0.2)',
-                border: '2px solid white',
+                background: 'rgba(255,255,255,0.15)',
+                border: '2px solid rgba(255,255,255,0.8)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backdropFilter: 'blur(4px)'
               }}
               title="Pause"
             >
@@ -240,49 +224,20 @@ function VideoPlayer({ src }) {
             <button
               onClick={handleStop}
               style={{
-                width: '48px',
-                height: '48px',
+                width: '52px',
+                height: '52px',
                 borderRadius: '50%',
-                background: 'rgba(255,255,255,0.2)',
-                border: '2px solid white',
+                background: 'rgba(255,255,255,0.15)',
+                border: '2px solid rgba(255,255,255,0.8)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backdropFilter: 'blur(4px)'
               }}
               title="Stop"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                 <rect x="4" y="4" width="16" height="16"/>
-              </svg>
-            </button>
-            <button
-              onClick={() => {
-                if (videoRef.current) {
-                  videoRef.current.muted = false
-                  videoRef.current.volume = 1.0
-                  setBrowserMuted(false)
-                }
-              }}
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                background: 'rgba(255,100,100,0.3)',
-                border: '2px solid #ff6464',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backdropFilter: 'blur(4px)'
-              }}
-              title="Unmute / Enable Sound"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5"/>
-                <line x1="23" y1="9" x2="17" y2="15" stroke="white" strokeWidth="2"/>
-                <line x1="17" y1="9" x2="23" y2="15" stroke="white" strokeWidth="2"/>
               </svg>
             </button>
           </div>
