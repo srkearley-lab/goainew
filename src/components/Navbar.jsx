@@ -10,13 +10,14 @@ const NAV_LINKS = [
   { key: 'nav_contact',    to: '/contact' },
 ];
 
-export function Logo() {
+export function Logo({ height = 48 }) {
   return (
-    <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-      <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Icon name="Zap" size={18} color="#fff" />
-      </div>
-      <span style={{ fontFamily: 'var(--font-head)', fontSize: 20, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.03em' }}>GO AI</span>
+    <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+      <img
+        src="/goai-logo.png"
+        alt="GO AI"
+        style={{ height: `${height}px`, width: 'auto', objectFit: 'contain' }}
+      />
     </Link>
   );
 }
@@ -139,7 +140,7 @@ export function Footer() {
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 40, marginBottom: 48 }}>
           <div style={{ gridColumn: 'span 2' }}>
-            <Logo />
+            <Logo height={52} />
             <p style={{ marginTop: 16, color: 'var(--ink-3)', fontSize: 'var(--text-sm)', maxWidth: 280, lineHeight: 1.6 }}>
               {t('footer_tagline')}
             </p>
